@@ -145,41 +145,72 @@
 
      // Update a single spot on the canvas.
      function update( spot ) {
+
+         // Do we still have work to do here?
          if ( spot.step > 0 ) {
+
+             // Does it look like we're escaping?
              if ( spot.pos.abs() > 2.0 ) {
+                 // Yup. Delete that pixel.
                  room.remove( spot.pixel );
                  spot.step = 0;
              } else {
+                 // We've not escaped yet, and neither have we run out of
+                 // attempts to. So let's calculate some more.
                  spot.pos = spot.start.add( spot.pos.mul( spot.pos ) );
                  spot.step -= 1;
              }
+
+             // Let the caller know we changed something.
+             return true;
          }
+
+         // Let the caller know nothing changed.
+         return false;
      }
+
+     // Work out how many steps are left in the canvas.
+     const stepsLeft = canvas => canvas.flat().reduce( ( all, current ) => all + current.step, 0 );
 
      // animation loop.
      renderer.setAnimationLoop( () => {
 
-         // Update the current spot. Note that, on purpose, this is taking a
-         // *very* slow walk through the canvas and calculating the set.
-         // This isn't supposed to be efficiant. It's supposed to be the
-         // opposite. It's mostly about playign with drawing in VR space.
-         update( CANVAS[ canvasPos( x ) ][ canvasPos( y ) ] );
+         // If there are no steps left to process, don't do anything in this
+         // (or any future) animation loops.
+         if ( stepsLeft( CANVAS ) > 0 ) {
 
-         // Move along...
-         x += PIXEL_SIZE;
-         if ( x >= CANVAS_SIZE ) {
-             x = -CANVAS_SIZE;
-             y += PIXEL_SIZE;
+             // To speed things up a little, we're going to render the scene
+             // again when something was actually updated. The update function
+             // (see above) does the job of letting us know if an update happened.
+             let updated = false;
+             do {
+
+                 // Update the set.
+                 updated = update( CANVAS[ canvasPos( x ) ][ canvasPos( y ) ] );
+
+                 // Regardless of if there was an update or not, move along...
+                 x += PIXEL_SIZE;
+                 if ( x >= CANVAS_SIZE ) {
+                     x = -CANVAS_SIZE;
+                     y += PIXEL_SIZE;
+                 }
+                 if ( y >= CANVAS_SIZE ) {
+                     y = -CANVAS_SIZE;
+                 }
+
+                 // Move the cursor.
+                 theCursor.position.x = x;
+                 theCursor.position.y = y + CANVAS_SIZE;
+
+             } while ( !updated );
+
+             // Now, if there was any sort of update...
+             if ( updated ) {
+                 // ...render the new scene.
+                 renderer.render( scene, camera );
+             }
          }
-         if ( y >= CANVAS_SIZE ) {
-             y = -CANVAS_SIZE;
-         }
 
-         // Move the cursor.
-         theCursor.position.x = x;
-         theCursor.position.y = y + CANVAS_SIZE;
-
-         renderer.render( scene, camera );
      } );
 
     </script>
