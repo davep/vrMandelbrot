@@ -25,8 +25,9 @@
      import { XRControllerModelFactory } from "https://unpkg.com/three@0.127.0/examples/jsm/webxr/XRControllerModelFactory.js";
 
      // Constants
+     const ROOM_SIZE   = 6;
      const PIXEL_SIZE  = 0.1;
-     const CANVAS_SIZE = 3;
+     const CANVAS_SIZE = ROOM_SIZE / 2;
      const GAP_SIZE    = 0.005;
      const PIXEL_SHAPE = new THREE.BoxGeometry( PIXEL_SIZE - GAP_SIZE, PIXEL_SIZE - GAP_SIZE, PIXEL_SIZE - GAP_SIZE );
      const CANVAS      = Array.from( Array( ( CANVAS_SIZE / PIXEL_SIZE ) * 2 ), () => new Array( ( CANVAS_SIZE / PIXEL_SIZE ) * 2 ) );
@@ -50,7 +51,10 @@
      // Function for making the camrea.
      function theCamera() {
          const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-         camera.position.z = 5;
+         // This isn't really that important for VR, but when we're not in
+         // VR, it starts the camrea off in the browser in an okay location.
+         camera.position.z = ROOM_SIZE / 2;
+         camera.position.y = ROOM_SIZE / 2;
          return camera
      }
 
@@ -69,7 +73,7 @@
      // Oh hi Mark!
      function theRoom() {
          return new THREE.LineSegments(
-             new BoxLineGeometry( 6, 6, 6, 10, 10, 10 ).translate( 0, 3, 0 ),
+             new BoxLineGeometry( ROOM_SIZE, ROOM_SIZE, ROOM_SIZE, 10, 10, 10 ).translate( 0, 3, 0 ),
              new THREE.LineBasicMaterial( { color: 0xFFFF00 } )
          );
      }
