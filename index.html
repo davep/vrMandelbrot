@@ -92,6 +92,8 @@
          return pixel;
      }
 
+     const theCursor = new THREE.Mesh( new THREE.BoxGeometry( PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE ) );
+
      // Create the things that will help make the scene.
      const scene = new THREE.Scene();
      const camera = theCamera();
@@ -131,6 +133,12 @@
      let x = -CANVAS_SIZE;
      let y = -CANVAS_SIZE;
 
+     // Add the cursor to the scene.
+     theCursor.position.x = x;
+     theCursor.position.y = y + CANVAS_SIZE;
+     theCursor.position.z = -1;
+     room.add( theCursor );
+
      // Update a single spot on the canvas.
      function update( spot ) {
          if ( spot.step > 0 ) {
@@ -162,6 +170,10 @@
          if ( y >= CANVAS_SIZE ) {
              y = -CANVAS_SIZE;
          }
+
+         // Move the cursor.
+         theCursor.position.x = x;
+         theCursor.position.y = y + CANVAS_SIZE;
 
          renderer.render( scene, camera );
      } );
