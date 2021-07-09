@@ -204,12 +204,9 @@
 
              } while ( !updated );
 
-             // Now, if there was any sort of update...
-             if ( updated ) {
-                 // ...render the new scene.
-                 renderer.render( scene, camera );
-             }
          }
+
+         renderer.render( scene, camera );
 
      } );
 
