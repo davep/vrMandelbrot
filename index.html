@@ -149,16 +149,15 @@
          // Do we still have work to do here?
          if ( spot.step > 0 ) {
 
+             // Calculate the next position.
+             spot.pos = spot.start.add( spot.pos.mul( spot.pos ) );
+             spot.step -= 1;
+
              // Does it look like we're escaping?
              if ( spot.pos.abs() > 2.0 ) {
                  // Yup. Delete that pixel.
                  room.remove( spot.pixel );
                  spot.step = 0;
-             } else {
-                 // We've not escaped yet, and neither have we run out of
-                 // attempts to. So let's calculate some more.
-                 spot.pos = spot.start.add( spot.pos.mul( spot.pos ) );
-                 spot.step -= 1;
              }
 
              // Let the caller know we changed something.
