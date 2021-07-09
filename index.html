@@ -96,8 +96,6 @@
          return pixel;
      }
 
-     const theCursor = new THREE.Mesh( new THREE.BoxGeometry( PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE ) );
-
      // Create the things that will help make the scene.
      const scene = new THREE.Scene();
      const camera = theCamera();
@@ -138,6 +136,7 @@
      let y = -CANVAS_SIZE;
 
      // Add the cursor to the scene.
+     let theCursor = new THREE.Mesh( new THREE.BoxGeometry( PIXEL_SIZE, PIXEL_SIZE, PIXEL_SIZE ) );
      theCursor.position.x = x;
      theCursor.position.y = y + CANVAS_SIZE;
      theCursor.position.z = -1;
@@ -203,6 +202,11 @@
 
              } while ( !updated );
 
+         } else if ( theCursor ) {
+             // There's nothing left to update, and the cursor is still in
+             // the scene, so let's nuke that to tidy things up a bit.
+             room.remove( theCursor );
+             theCursor = null;
          }
 
          renderer.render( scene, camera );
